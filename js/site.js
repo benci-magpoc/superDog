@@ -103,6 +103,8 @@ function buildDropDown() {
         dropDownLink.textContent = element;
         eventDropDown.appendChild(dropDownItem);
     });
+
+    displayStats(currentEvents);
 }
 
 //get events from data. checks if null, if so, create and save to localstorage
@@ -132,6 +134,8 @@ function getEventData(clickedElement) {
                 return event;
             }
         });
+    } else {
+        filteredEvents = currentEvents;
     }
 
     let statHeader = document.getElementById("statHeader");
