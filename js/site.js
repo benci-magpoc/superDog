@@ -105,6 +105,9 @@ function buildDropDown() {
     });
 
     displayStats(currentEvents);
+    console.log(currentEvents);
+
+    displayEventData(currentEvents);
 }
 
 //get events from data. checks if null, if so, create and save to localstorage
@@ -176,4 +179,67 @@ function displayStats(filteredEvents) {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
     });
+}
+
+//displays all data for all events on a table 
+function displayEventData(currentEvents) {
+
+    let template = document.getElementById("eventData-template");
+    let eventBody = document.getElementById("eventBody");
+
+    eventBody.innerHTML = "";
+
+    //loop over events to write table rows on eventBody
+    for (let index = 0; index < currentEvents.length; index++) {
+
+        let eventTableRow = document.importNode(template.content, true);
+
+        //grabs columns from the template and sets it on the template
+        let eventTableColumn = eventTableRow.querySelectorAll("td");
+
+        //accessing each element of the array
+        eventTableColumn[0].textContent = currentEvents[index].event;
+        eventTableColumn[1].textContent = currentEvents[index].city;
+        eventTableColumn[2].textContent = currentEvents[index].state;
+        eventTableColumn[3].textContent = currentEvents[index].attendance.toLocaleString();
+        eventTableColumn[4].textContent = new Date(currentEvents[index].date).toLocaleDateString();
+
+        //write data to the row
+        eventBody.appendChild(eventTableRow);
+    }
+}
+
+function saveEventData() {
+
+    let currentEvents = getEvents();
+
+    let eventObject = {
+        event: "name",
+        city: "city",
+        state: "state",
+        attendance: 0,
+        date: "01/01/2000"
+    }
+
+    eventObject.event = document.getElementById("newEventName").value;
+    eventObject.city = document.getElementById("newEventCity").value;
+
+    //pull what is selected on the drop down selector
+    let stateSelected = document.getElementById("newEventState");
+    //assign the text value to eventObject.state
+    eventObject.state = stateSelected.options[stateSelected.selectedIndex].text;
+    //parse attendance value to integer
+    eventObject.attendance = parseInt(document.getElementById("newEventAttendance").value);
+
+    let eventDate = document.getElementById("newEventDate").value;
+    let formattedDate = `${eventDate}, 00:00`;
+
+    eventObject.date = formattedDate;
+
+    //push eventObject values to currentEvents object
+    currentEvents.push(eventObject);
+    localStorage.setItem("eventData", JSON.stringify(currentEvents));
+
+    buildDropDown();
+
 }
